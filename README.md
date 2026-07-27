@@ -14,6 +14,51 @@ Important: this project does so by scraping publicly accessible pages. It is int
 - Return results as structured JSON suitable for scripts and small applications.
 - TypeScript-first codebase for type-safety and clarity.
 
+## Endpoints
+
+The following endpoints are implemented in src/torrent.controller.ts. Replace host/port with your server configuration (default: http://localhost:3000).
+
+- GET /
+  - Health & index endpoint. Returns a description and a summary of available endpoints.
+
+- Search
+  - GET /search?q=<term>&page=<number>&sort=<sort_key>&cat=<category>
+    - Example: `/search?q=ubuntu&page=0&sort=seeds_desc&cat=300`
+    - Alternative path-style: `/search/:term`, `/search/:term/:page`, `/search/:term/:page/:cat`
+  - POST /search
+    - Body: `{ q: "term", page: 0, sort: "seeds_desc", cat: 300 }`
+
+- Top torrents
+  - GET /top?cat=<category>&sort=<sort_key>
+    - Example: `/top?cat=0&sort=seeds_desc`
+  - GET /top/:cat
+  - POST /top
+    - Body: `{ cat: 0, sort: "seeds_desc" }`
+
+- Top (last 48 hours)
+  - GET /top48h?cat=<category>&sort=<sort_key>
+  - GET /top48h/:cat
+  - POST /top48h
+    - Body: `{ cat: 0, sort: "seeds_desc" }`
+
+- Recent torrents
+  - GET /recent?page=<number>&sort=<sort_key>
+    - Example: `/recent?page=0&sort=seeds_desc`
+  - GET /recent/:page
+  - POST /recent
+    - Body: `{ page: 0, sort: "seeds_desc" }`
+
+- API passthrough search
+  - GET /api-search?q=<query params>
+    - This passes the raw query string through to the Pirate Bay `s/` endpoint.
+    - Example: `/api-search?q=ubuntu+intitle:server`
+  - POST /api-search
+    - Body: `{ q: "query params" }`
+
+Notes
+- sort: The controller supports a set of sort keys. Common keys used in the code include: `seeds_desc`, `seeds_asc`, `title_asc`, `title_desc`, `time_desc`, `time_asc`, `size_desc`, `size_asc`, `leeches_desc`, `leeches_asc`, `uploader_asc`, `uploader_desc`, `category_asc`, `category_desc`.
+- cat: category numbers follow The Pirate Bay category ids. Use `0` for all categories.
+
 ## Quick start
 
 Requirements:
@@ -34,20 +79,11 @@ Run development server:
 npm run dev
 ```
 
-Example request (replace host/port if configured differently):
+Example request:
 
 ```bash
 curl "http://localhost:3000/search?q=ubuntu"
 ```
-
-## API (example)
-
-- GET /search?q=<query>&category=<category>&page=<number>
-  - Returns a JSON array of matching torrent metadata.
-- GET /torrent/:id
-  - Returns detailed metadata for a single torrent entry, including magnet link.
-
-Adjust endpoints to match the implementation in the codebase.
 
 ## Contributing
 
